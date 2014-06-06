@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- saved from url=(0058)http://www.cs.cmu.edu/~prs/15-441-F13/project2/p2-faq.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  
+  <title>Project 3 FAQ</title>
+</head>
+<body>
+<div style="text-align: center;">
+<h2>Project 3 FAQ </h2>
+<table style="width: 100%; text-align: left;" border="1" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <th style="vertical-align: top; width: 20%;">Question </th>
+      <th style="vertical-align: top; width: 60%;">Answer</th>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"> 
+How does XXXX affect the receiver window?   
+</td>
+      <td style="vertical-align: top; width: 60%;"> 
+There is NO RECEIVER WINDOW in this assignment.  This is a deviation from 
+TCP, but exists to make your life easier.  This means that no window 
+information needs to be included in the packet header.  Also, on the 
+receiving end of the connection, you do not need to worry that we will test
+that you correctly drop packets that are ``outside the receiver window''.
+No such window exists, so it will not be tested.  The receiver does not need
+to guess the window of the sender or anything complicated like that.  The
+receiver can chose to keep or drop any packets received that have sequence
+numbers greater than the next expected sequence number.  
+</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"> 
+How many times should i retransmit a packet before giving up?  
+</td>
+      <td style="vertical-align: top; width: 60%;"> 
+We would suggest at least 5 times, so you code can handle reasonable loss rates.
+Our reference peer will retransmitt up to 10 times.  
+</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"> 
+How long do I have to wait between connections to a particular peer?  
+Particularly, what about the case when I think I have downloaded a complete chunk from a peer, 
+but the ack was lost, and I send a new GET.  The other peer will be confused because it
+thinks the old download is still running, and it is illegal to have two
+downloads at the same time from a single host.  
+</td>
+      <td style="vertical-align: top; width: 60%;"> 
+When you receive the new GET, just forget about the old connection and no 
+longer worry about retransmitting any of the old data (ie: it is the 
+sender's responsible not to send a second GET until they have successfully
+downloaded all of the data).  
+</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"> Are we required to
+	do RTT estimation for any of the checkpoints?  
+</td>
+      <td style="vertical-align: top; width: 60%;"> 
+No.  You may use a static timeout value for any of the checkpoints, as long as
+it is under 3 seconds.  Obviously, you final submission WILL require RTT
+estimation. 
+</td>
+      
+    </tr>
+
+    <tr>
+      <td style="vertical-align: top; width: 20%;"> 
+What are the units of the parameters in the topo.map file for spiffy?
+</td>
+      <td style="vertical-align: top; width: 60%;"> 
+bw = the capacity of the link in bits/sec <br>
+delay = the one-way propagation delay of the link in milliseconds <br>
+queue-size = how big the queue on the router at the start of the link is
+  in packets <br>
+
+</td>
+      
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"> Are we required to
+	do RTT estimation for any of the checkpoints?  
+</td>
+      <td style="vertical-align: top; width: 60%;"> 
+No.  You may use a static timeout value for any of the checkpoints, as long as
+it is under 3 seconds.  Obviously, you final submission WILL require RTT
+estimation. 
+</td>
+      
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"> Can I assume that
+	all data packets will be a certain length?  Or that all packets
+	accept for the last one are a certain length?
+</td>
+      <td style="vertical-align: top; width: 60%;"> 
+No.  You must be able to handle any data packets with any amount 
+of data up to the amount that can fit in a 1500 byte packet.  Don't 
+calculate the number of data packets you will receive from a peer, because
+the peer may need to send different amounts of data in different packets.   
+</td>
+      
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;">  What number
+do I include an in ACK packet?  Is it the sequence number i just got, or 
+the next one I'm expected?  
+</td>
+      <td style="vertical-align: top; width: 60%;"> 
+This is a bit confusing, and I messed things up in recitation.  While TCP
+sends the next number in the sequence space it is expecting, the assignment
+write-up indicates that you should send back the sequence number of the packet
+you just received.  That is, if you get Data Seqnum=100, send Ack Acknum=100.
+For CHECKPOINT2 ONLY, either behavior will be acceptable.  
+</td>
+      
+    </tr>
+
+    <tr>
+      <td style="vertical-align: top; width: 20%;">  What amount of 
+interoperability is required for my peers?  Is it ok if I fail to perform
+requirement X with peers other than the one I submit?  What about for the 
+contest?   
+</td>
+      <td style="vertical-align: top; width: 60%;"> 
+Your peer must be able to perform all required functionality (as specified 
+in the hand-out) with any other client that performs the protocol as 
+specified in the handout.  This is necessary for us to test your binary.  
+The only time you can assume that you are communicating with other peers
+running your exact same binary is for any extra credit functionality, or the 
+contest.  For example, if you have implemented DENIED, you know that all 
+other peers in our contest tests will also used DENIED messages.
+</td>
+      
+    </tr>
+ 
+    <tr>
+      <td style="vertical-align: top; width: 20%;"> 
+	Why am I getting 0.0.0.0 back from spiffy as the source address of
+	packets when all of my peers say 127.0.0.1 as their IP?
+	</td>
+      <td style="vertical-align: top; width: 60%;"> 
+ <p> This is because the starter code initializes spiffy with INADDR_ANY 
+(0.0.0.0), which is another name for 'any local address', instead of specifying
+127.0.0.1 specifically.  here's a simple change you can make to your code
+in peer.c :</p>
+
+<p>comment out this line:<i> 	myaddr.sin_addr.s_addr = INADDR_ANY; </i></p>
+<p> and add this line: 	<i> inet_aton("127.0.0.1", (struct in_addr *)&amp;myaddr.sin_addr.s_addr); </i> </p>
+<p>
+If this causes problems, make sure you are including the correct header files to use inet_aton. 
+</p>
+</td>
+      
+    </tr>
+
+
+   <tr>
+      <td style="vertical-align: top; width: 20%;">  Do we have to implement
+caching?  This is, if a peer does not ``own'' a chunk according to 
+its has-chunks-file, but has already downloaded from another peer, 
+is it REQUIRED to respond to a WHOHAS request for that chunk?
+</td>
+      <td style="vertical-align: top; width: 60%;"> 
+No.  Caching falls under the optimizations in section 6.3 .  Doing so is
+highly suggested for the contest and as an extra credit measure, but it is
+not strictly required.  
+</td>
+      
+    </tr>
+
+    <tr>
+      <td style="vertical-align: top; width: 20%;"> my calls to 
+	binary2hex and hex2binary (aka hex2ascii and ascii2hex) are
+	crashing!</td>
+      <td style="vertical-align: top; width: 60%;"> 
+  Make sure you are passing the buffers in the correct order (see 
+chunks.c), as both buffers are typed as <i>char *</i>.  Also, the 
+length that is past in is the length of the INPUT, not the output.
+For ascii2hex, the input is 40 bytes, for hex2ascii the input is 20
+bytes.    
+</td>
+      
+    </tr>
+
+    <tr>
+      <td style="vertical-align: top; width: 20%;"> "peer_run could not bind socket: Address already in use", and similar errors</td>
+      <td style="vertical-align: top; width: 60%;"> If you are developing on a machine that is likely to be shared with other 15-441 students, remember to change 
+the your port values to something other than what is given in the handout.  This
+goes for both the port set in your SPIFFY_ROUTER env variable, as well as
+those specified in nodes.map .  <br>
+The same caution should be noted for other "shared resources", such as the
+/tmp directory that is used in the handouts.  
+</td>
+      
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"> SPIFFY_ROUTER not set? </td>
+      <td style="vertical-align: top; width: 60%;"> Please read Section 7 of
+the handout carefully and walk through the demo if you are having "Spiffy"-related 
+problems.  Your starter code
+already includes socket calls that use the "Spiffy" virtual network.  
+To run, the code attempts to read an environment variable called "SPIFFY_ROUTER"
+that gives an IP address and port to communicate with the spiffy virtual
+network.  Depending on your shell, you can use "setenv" (c-shell) or 
+"export" (bash shell) to set the env. variable.  </td>
+      
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 20%;"> bt_parse error: Node identity must not be zero! </td>
+      <td style="vertical-align: top; width: 60%;"> 
+The parse included with the peer code does not want you to have a node id of zero, which was
+specified as acceptable in the hand-out.  Just use node ids of 1 and 2 instead.  We have updated
+the example in the handout for this (note: the nodes.map file we included with the code was
+already correct).  
+</td>
+      
+    </tr>
+ </tbody>
+</table>
+<br>
+</div>
+
+</body></html>
